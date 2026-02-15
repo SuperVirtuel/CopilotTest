@@ -14,25 +14,28 @@ jobs:
           python-version: '3.11'
       
       # Cache Blender
-      - uses: actions/cache@v3
+      - name: Cache Blender
         id: cache-blender
+        uses: actions/cache@v3
         with:
-          path: |
-            blender-*
-            _blender-executable-path.txt
-          key: blender-4.3.0-${{ runner.os }}
+          path: /usr/local/blender
+          key: blender-4.3.0
       
-      # Download Blender if not cached
+      # Download and install Blender
       - name: Install Blender
         if: steps.cache-blender.outputs.cache-hit != 'true'
         run: |
-          pip install blender-downloader
-          blender-downloader 4.3.0 --extract --remove-compressed
+          wget -q https://download.blender.org/release/Blender4.3/blender-4.3.0-linux-x64.tar.xz
+          tar -xf blender-4.3.0-linux-x64.tar.xz
+          sudo mv blender-4.3.0-linux-x64 /usr/local/blender
       
-      # Install pytest
+      - name: Add Blender to PATH
+        run: |
+          sudo ln -sf /usr/local/blender/blender /usr/local/bin/blender
+          blender --version
+      
       - name: Install pytest-blender
         run: pip install pytest-blender pytest
       
-      # Run tests
       - name: Run tests
         run: pytest tests/ -v
