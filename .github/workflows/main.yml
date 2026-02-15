@@ -1,0 +1,38 @@
+name: Pipeline Tests
+
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      
+      # Cache Blender
+      - uses: actions/cache@v3
+        id: cache-blender
+        with:
+          path: |
+            blender-*
+            _blender-executable-path.txt
+          key: blender-4.3.0-${{ runner.os }}
+      
+      # Download Blender if not cached
+      - name: Install Blender
+        if: steps.cache-blender.outputs.cache-hit != 'true'
+        run: |
+          pip install blender-downloader
+          blender-downloader 4.3.0 --extract --remove-compressed
+      
+      # Install pytest
+      - name: Install pytest-blender
+        run: pip install pytest-blender pytest
+      
+      # Run tests
+      - name: Run tests
+        run: pytest tests/ -v
