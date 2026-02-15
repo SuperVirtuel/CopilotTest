@@ -34,8 +34,17 @@ jobs:
           sudo ln -sf /usr/local/blender/blender /usr/local/bin/blender
           blender --version
       
+      # Install pytest-blender in SYSTEM Python
       - name: Install pytest-blender
-        run: pip install pytest-blender pytest
+        run: pip install pytest-blender
       
+      # NEW: Install pytest in BLENDER'S Python
+      - name: Install pytest in Blender Python
+        run: |
+          BLENDER_PYTHON=/usr/local/blender/4.3/python/bin/python3.11
+          $BLENDER_PYTHON -m ensurepip
+          $BLENDER_PYTHON -m pip install pytest
+      
+      # Run tests
       - name: Run tests
         run: pytest tests/ -v
