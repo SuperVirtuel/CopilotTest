@@ -2,7 +2,7 @@
 
 try:
     import bpy
-except Exception:
+except ImportError:
     # When running outside Blender, expect tests to inject a mock 'bpy' module
     import sys
     bpy = sys.modules.get('bpy')
