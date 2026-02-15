@@ -49,19 +49,23 @@ class Operation(ABC):
         """Return the type of operation"""
         pass
 
+    def _create_result(self, a: float, b: float, result: Union[float, str], success: bool = True) -> CalculationResult:
+        """Helper method to create a CalculationResult"""
+        return CalculationResult(
+            operation=self.get_operation_type(),
+            operand1=a,
+            operand2=b,
+            result=result,
+            success=success
+        )
+
 
 class AddOperation(Operation):
     """Concrete implementation of addition operation"""
     
     def execute(self, a: float, b: float) -> CalculationResult:
         result = a + b
-        return CalculationResult(
-            operation=self.get_operation_type(),
-            operand1=a,
-            operand2=b,
-            result=result,
-            success=True
-        )
+        return self._create_result(a, b, result)
     
     def get_operation_type(self) -> OperationType:
         return OperationType.ADD
@@ -72,13 +76,7 @@ class SubtractOperation(Operation):
     
     def execute(self, a: float, b: float) -> CalculationResult:
         result = a - b
-        return CalculationResult(
-            operation=self.get_operation_type(),
-            operand1=a,
-            operand2=b,
-            result=result,
-            success=True
-        )
+        return self._create_result(a, b, result)
     
     def get_operation_type(self) -> OperationType:
         return OperationType.SUBTRACT
@@ -89,13 +87,7 @@ class MultiplyOperation(Operation):
     
     def execute(self, a: float, b: float) -> CalculationResult:
         result = a * b
-        return CalculationResult(
-            operation=self.get_operation_type(),
-            operand1=a,
-            operand2=b,
-            result=result,
-            success=True
-        )
+        return self._create_result(a, b, result)
     
     def get_operation_type(self) -> OperationType:
         return OperationType.MULTIPLY
@@ -106,21 +98,9 @@ class DivideOperation(Operation):
     
     def execute(self, a: float, b: float) -> CalculationResult:
         if b == 0:
-            return CalculationResult(
-                operation=self.get_operation_type(),
-                operand1=a,
-                operand2=b,
-                result='Error: Division by zero',
-                success=False
-            )
+            return self._create_result(a, b, 'Error: Division by zero', success=False)
         result = a / b
-        return CalculationResult(
-            operation=self.get_operation_type(),
-            operand1=a,
-            operand2=b,
-            result=result,
-            success=True
-        )
+        return self._create_result(a, b, result)
     
     def get_operation_type(self) -> OperationType:
         return OperationType.DIVIDE
@@ -139,10 +119,8 @@ class Calculator:
     
     def calculate(self, operation_type: OperationType, a: float, b: float) -> CalculationResult:
         """Perform a calculation using the specified operation type"""
-        operation = self._operations.get(operation_type)
-        if operation:
-            return operation.execute(a, b)
-        raise ValueError(f"Unsupported operation: {operation_type}")
+        operation = self._operations[operation_type]
+        return operation.execute(a, b)
 
 
 if __name__ == '__main__':
