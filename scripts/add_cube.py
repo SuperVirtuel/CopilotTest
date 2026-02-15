@@ -6,6 +6,11 @@ except Exception:
     # When running outside Blender, expect tests to inject a mock 'bpy' module
     import sys
     bpy = sys.modules.get('bpy')
+    if bpy is None:
+        raise ImportError(
+            "bpy module not available; when running outside Blender, "
+            "inject a mock 'bpy' into sys.modules before importing this script."
+        )
 
 
 def add_cube_and_save(filepath: str = 'scene.blend', location=(0, 0, 0)) -> None:
