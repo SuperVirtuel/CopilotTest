@@ -119,8 +119,17 @@ class Calculator:
     
     def calculate(self, operation_type: OperationType, a: float, b: float) -> CalculationResult:
         """Perform a calculation using the specified operation type"""
-        operation = self._operations[operation_type]
-        return operation.execute(a, b)
+        try:
+            operation = self._operations[operation_type]
+            return operation.execute(a, b)
+        except KeyError:
+            return CalculationResult(
+                operation=operation_type,
+                operand1=a,
+                operand2=b,
+                result=f'Error: Unsupported operation {operation_type}',
+                success=False
+            )
 
 
 if __name__ == '__main__':
