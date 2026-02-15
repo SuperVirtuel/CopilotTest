@@ -20,7 +20,7 @@ def add_cube_and_save(filepath: str = 'scene.blend', location=(0, 0, 0)) -> None
     In tests, a lightweight mock of bpy is provided.
     """
     bpy.ops.mesh.primitive_cube_add(location=location)
-    bpy.ops.wm.save_mainfile(filepath)
+    bpy.ops.wm.save_mainfile(filepath=filepath)
 
 
 if __name__ == '__main__':
